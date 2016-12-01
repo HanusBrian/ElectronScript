@@ -1,0 +1,29 @@
+<!doctype HTML>
+<html>
+ 	<head>
+ 	<title>HelpTextApp</title>
+ 	<link rel="stylesheet" href="index.css">
+ 	</head>
+
+ 	<body>
+		<div style="margin: 10px">
+			<h1 style="display:inline">
+				Help Text App!!!
+			</h1>
+		<form>
+			<input id="download-button" type="button" value="Download Template" onClick="window.location.href='helpTextTemplate.xls'">
+		</form>
+		</div>
+		<div ondragover="handleDragover()" 
+			ondragleave="handleDragend()" 
+			ondrop="handleDrop(event)"
+			style="height: 500px; border: 5px dotted #ccc;border-radius:10px">
+			<p style="margin: 10px; text-align: center">
+				<strong>Drop Your Helptext Excel Here</strong>
+			</p>
+		</div>
+		<!--<script>require('./index.js')</script>-->
+	</body>
+	 <script src='index.js'></script>
+</html>
+

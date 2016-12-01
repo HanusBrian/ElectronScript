@@ -1,0 +1,16 @@
+{
+  "name": "HelpTextApp",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "private": true,
+  "dependencies": {
+    "xlsjs": "^0.7.5"
+  },
+  "devDependencies": {
+    "@types/node": "^6.0.42",
+    "electron-prebuilt": "0.37.8"
+  }
+}

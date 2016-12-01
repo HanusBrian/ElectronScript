@@ -1,0 +1,25 @@
+#download-button {
+    padding:10px;
+    color:black;
+    background-color:cyan;
+    display:inline;
+    border-radius:3px;
+    border: 1px solid grey;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+#download-button:hover {
+    cursor: pointer;
+    border: 1px solid #FCB040;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    height: 50px;
+    width: 100%;
+    background-color: grey;
+}

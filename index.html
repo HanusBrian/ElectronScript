@@ -14,8 +14,8 @@
 			<input id="download-button" type="button" value="Download Template" onClick="window.location.href='helpTextTemplate.xls'">
 		</form>
 		</div>
-		<div ondragover="handleDragover()" 
-			ondragleave="handleDragend()" 
+		<div ondragover="handleDragover(event)" 
+			ondragleave="handleDragend(event)" 
 			ondrop="handleDrop(event)"
 			style="height: 500px; border: 5px dotted #ccc;border-radius:10px">
 			<p style="margin: 10px; text-align: center">

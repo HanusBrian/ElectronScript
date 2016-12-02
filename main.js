@@ -14,33 +14,34 @@ app.on('ready', () => {
 
     win.loadURL('file://' + __dirname + '/index.html');
 
-    ipcMain.on('file-drop', (event, path)=>{
-        if(path){
-            console.log("File info: " + path);
-            parseFile(path, event);
-        }else{
-            console.log("no files found");
-        }
-    });
+});
 
-    function parseFile(file, event) {
-        var workbook = XLS.readFile(file, {type: "binary"});
-        
-        var dataArr = XLS.utils.sheet_to_row_object_array(workbook.Sheets['Sheet1']);
-
-        for(var i = 0; i < dataArr.length; i++) {
-            console.log(dataArr[i]);
-        }
-        fs.writeFile('src/app/helptextData.ts', 
-            'export const HelptextData =\n' + JSON.stringify(dataArr, null, 4), 
-            'utf-8', 
-            (err) => {
-                if(err) console.log(err.message);
-                else {
-                    console.log('File successfully written');
-                    event.sender.send('file-done');
-                }
-            }
-        );
+ipcMain.on('file-drop', (event, path) => {
+    if (path) {
+        console.log("File info: " + path);
+        parseFile(path, event);
+    } else {
+        console.log("no files found");
     }
 });
+
+function parseFile(file, event) {
+    var workbook = XLS.readFile(file, { type: "binary" });
+
+    var dataArr = XLS.utils.sheet_to_row_object_array(workbook.Sheets['Sheet1']);
+
+    for (var i = 0; i < dataArr.length; i++) {
+        console.log(dataArr[i]);
+    }
+    fs.writeFile('helptextData.json',
+        JSON.stringify(dataArr, null, 4),
+        'utf-8',
+        (err) => {
+            if (err) console.log(err.message);
+            else {
+                console.log('File successfully written');
+                event.sender.send('file-done');
+            }
+        }
+    );
+}

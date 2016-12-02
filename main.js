@@ -45,3 +45,11 @@ function parseFile(file, event) {
         }
     );
 }
+ipcMain.on('open-helptext-window', () =>{
+    var helptextWindow = new BrowerWindow({
+        width: 900,
+        height: 700,
+    });
+
+    helptextWindow.loadURL('file://' + __dirname + '/output/displayHelptext.htm');
+});

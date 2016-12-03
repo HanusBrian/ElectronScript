@@ -51,5 +51,5 @@ ipcMain.on('open-helptext-window', () =>{
         height: 700,
     });
 
-    helptextWindow.loadURL('file://' + __dirname + '/output/displayHelptext.htm');
+    helptextWindow.loadURL('file://' + __dirname + '/output/displayHelptext.html');
 });

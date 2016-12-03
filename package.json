@@ -7,7 +7,8 @@
   },
   "private": true,
   "dependencies": {
-    "xlsjs": "^0.7.5"
+    "xlsjs": "^0.7.5",
+    "zip-folder": "1.0.0"
   },
   "devDependencies": {
     "@types/node": "^6.0.42",

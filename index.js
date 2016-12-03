@@ -5,6 +5,7 @@ var remote = electron.remote;
 var ipcMain = remote.require('./main');
 var fs = require('fs');
 var path = require('path');
+var zip = require('zip-folder');
 
 function handleDrop(e) {
   e.preventDefault();
@@ -24,20 +25,25 @@ ipcRenderer.on('file-done', (event) => {
 
 function writeHelptext(data) {
   this.rmDir(__dirname + '/output/');
-  fs.writeFile('./output/masterHelptext.htm','', ()=>{});
-  var buttons = `
-  <body>
-  <input id="download-button" type="button" value="Download Master HelpText" onClick="window.location.href='masterTemplate.htm'">
-  <input id="download-button" type="button" value="Download Split Question Folder" onClick="window.location.href='splitFiles'">
-  </body>
-  `;
-  fs.writeFile('./output/displayHelptext.htm', buttons, () => {
+  fs.writeFile('./output/masterHelptext.htm', '', () => { });
 
-  fs.mkdir('output', () => {
+  fs.mkdir('./output', () => {
     fs.mkdir('output/splitFiles', () => {
+      var buttons = `
+      <html><body>
+        <header>
+        <a href="./masterHelptext.htm" download>
+          <div>Download Master File</div>
+        </a>
+        <a href="./splitFiles.zip" download>
+          <div>Download Split Text</div>
+        </a>
+        </header>
+        `;
+      fs.writeFile('./output/displayHelptext.html', buttons, () => { });
+      var tag = "";
+      var color = "";
       for (var i = 0; i < data.length; i++) {
-        var tag = "";
-        var color = "";
         switch (data[i]["Criticality"]) {
           case 'Critical': color = "red"; break;
           case 'Major': color = "orange"; break;
@@ -94,13 +100,18 @@ function writeHelptext(data) {
           </div>
         </body>
       `
-        fs.writeFileSync('./output/splitFiles/' + data[i]["Question Number"] + '.htm', tag);
-        fs.appendFileSync('./output/masterHelptext.htm', tag);
-        fs.appendFileSync('./output/displayHelptext.htm', tag);
+        fs.writeFile('./output/splitFiles/' + data[i]["Question Number"] + '.htm', tag, ()=>{});
+        fs.appendFile('./output/masterHelptext.htm', tag, ()=>{});
+        fs.appendFile('./output/displayHelptext.html', tag, ()=>{});
       }
-      console.log(tag);
+      fs.appendFile('./output/splitFiles', '</body></html>', ()=>{});
+      zip('./output/splitFiles', './output/splitFiles.zip', function (err) {
+        if (err) console.log(err);
+        // } else {
+        //   console.log('EXCELLENT');
+        // }
+      });
     })
-  });
   });
 }
 

@@ -1,0 +1,13 @@
+{
+  "name": "HelpTextApp",
+  "description": "Excel to html converter",
+  "version": "0.0.1",
+  "author": "Brian Hanus <hanus.brian@gmail.com>",
+  "license": "MIT",
+  "main": "main.js",
+  "private": true,
+  "dependencies": {
+    "xlsjs": "^0.7.5",
+    "zip-folder": "1.0.0"
+  }
+}

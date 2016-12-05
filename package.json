@@ -1,9 +1,17 @@
 {
   "name": "HelpTextApp",
+  "description": "Excel to html converter",
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron ./app/main.js",
+    "dist": "build --win --x64"
+  },
+  "build": {
+    "appId": "nqDaemon.HelpTextApp",
+    "win": {
+      "iconUrl": "http://electron.atom.io/images/apps/atom.png"
+    }
   },
   "private": true,
   "dependencies": {
@@ -12,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^6.0.42",
-    "electron-prebuilt": "0.37.8"
+    "electron-prebuilt": "0.37.8",
+    "electron-builder": "10.5.0"
   }
 }

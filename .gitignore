@@ -1,3 +1,6 @@
 /node_modules
-/output
+/app/output
+/app/node_modules
+/build
+/dist
 helptextData.json

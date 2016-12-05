@@ -6,29 +6,53 @@ var ipcMain = remote.require('./main');
 var fs = require('fs');
 var path = require('path');
 var zip = require('zip-folder');
+var XLS = require('xlsjs');
 
 function handleDrop(e) {
   e.preventDefault();
   var files = e.target.files || (e.dataTransfer && e.dataTransfer.files);
   if (files) {
     console.log(files[0].path);
-    ipcRenderer.send('file-drop', files[0].path);
+    parseFile(files[0].path);
   }
   return false;
 }
 
-ipcRenderer.on('file-done', (event) => {
+function parseFile(file) {
+  var workbook = XLS.readFile(file, { type: "binary" });
+
+  var dataArr = XLS.utils.sheet_to_row_object_array(workbook.Sheets['Sheet1']);
+
+  fs.writeFile('./helptextData.json',
+    JSON.stringify(dataArr, null, 4),
+    'utf-8',
+    (err) => {
+      if (err) console.log(err.message);
+      else {
+        console.log('File successfully written');
+        displayHelptext();
+      }
+    }
+  );
+}
+
+function displayHelptext() {
   var data = require('./helptextData.json');
-  writeHelptext(data);
+  writeHelptext(data, openHelptextWindow);
+}
+
+function openHelptextWindow() {
   ipcRenderer.send('open-helptext-window');
-})
+}
 
 function writeHelptext(data) {
-  this.rmDir(__dirname + '/output/');
-  fs.writeFile('./output/masterHelptext.htm', '', () => { });
+  if (fs.existsSync(__dirname + '/app/output/'))
+    this.rmDir(__dirname + '/app/output/');
 
-  fs.mkdir('./output', () => {
-    fs.mkdir('output/splitFiles', () => {
+  fs.writeFile('./app/output/masterHelptext.htm', '', ()=>{});
+
+  fs.mkdir('./app/output', () => {
+    fs.mkdir('/app/output/splitFiles', () => {
       var buttons = `
       <html><body>
         <header>
@@ -40,7 +64,7 @@ function writeHelptext(data) {
         </a>
         </header>
         `;
-      fs.writeFile('./output/displayHelptext.html', buttons, () => { });
+      fs.writeFile('./app/output/displayHelptext.html', buttons, () => { });
       var tag = "";
       var color = "";
       for (var i = 0; i < data.length; i++) {
@@ -100,19 +124,18 @@ function writeHelptext(data) {
           </div>
         </body>
       `
-        fs.writeFile('./output/splitFiles/' + data[i]["Question Number"] + '.htm', tag, ()=>{});
-        fs.appendFile('./output/masterHelptext.htm', tag, ()=>{});
-        fs.appendFile('./output/displayHelptext.html', tag, ()=>{});
+        fs.writeFile('./app/output/splitFiles/' + data[i]["Question Number"] + '.htm', tag, () => { });
+        fs.appendFile('./app/output/masterHelptext.htm', tag, () => { });
+        fs.appendFile('./app/output/displayHelptext.html', tag, () => { });
       }
-      fs.appendFile('./output/splitFiles', '</body></html>', ()=>{});
-      zip('./output/splitFiles', './output/splitFiles.zip', function (err) {
+      fs.appendFile('./app/output/splitFiles', '</body></html>', () => { });
+
+      zip('./app/output/splitFiles/', './app/output/splitFiles.zip', function (err) {
         if (err) console.log(err);
-        // } else {
-        //   console.log('EXCELLENT');
-        // }
       });
     })
   });
+  openHelptextWindow();
 }
 
 function handleDragover(e) {
@@ -126,7 +149,7 @@ function handleDragover(e) {
   return false;
 }
 
-rmDir = function (dirPath) {
+var rmDir = function (dirPath) {
   try { var files = fs.readdirSync(dirPath); }
   catch (e) { return; }
   if (files.length > 0)

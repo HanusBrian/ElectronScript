@@ -49,10 +49,10 @@ function writeHelptext(data) {
   if (fs.existsSync(__dirname + '/app/output/'))
     this.rmDir(__dirname + '/app/output/');
 
-  fs.writeFile('./app/output/masterHelptext.htm', '', ()=>{});
+  fs.writeFile('./app/output/masterHelptext.htm', '', () => { });
 
   fs.mkdir('./app/output', () => {
-    fs.mkdir('/app/output/splitFiles', () => {
+    fs.mkdir('./app/output/splitFiles', () => {
       var buttons = `
       <html><body>
         <header>
@@ -123,14 +123,13 @@ function writeHelptext(data) {
             </table>
           </div>
         </body>
-      `
+      `;
         fs.writeFile('./app/output/splitFiles/' + data[i]["Question Number"] + '.htm', tag, () => { });
         fs.appendFile('./app/output/masterHelptext.htm', tag, () => { });
         fs.appendFile('./app/output/displayHelptext.html', tag, () => { });
       }
       fs.appendFile('./app/output/splitFiles', '</body></html>', () => { });
-
-      zip('./app/output/splitFiles/', './app/output/splitFiles.zip', function (err) {
+      zip('./app/output/splitFiles', './app/output/splitFiles.zip', function (err) {
         if (err) console.log(err);
       });
     })

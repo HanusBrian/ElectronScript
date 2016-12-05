@@ -22,8 +22,13 @@ function parseFile(file) {
   var workbook = XLS.readFile(file, { type: "binary" });
 
   var dataArr = XLS.utils.sheet_to_row_object_array(workbook.Sheets['Sheet1']);
+    if (fs.existsSync('./app/helptextData.json'))
+    this.rmDir('./app/helptextData.json');
+  else
+  fs.writeFile('./app/helptextData.json', '',()=>{});
 
-  fs.writeFile('./helptextData.json',
+  fs.writeFile('./app/helptextData.json',
+  
     JSON.stringify(dataArr, null, 4),
     'utf-8',
     (err) => {
@@ -37,6 +42,7 @@ function parseFile(file) {
 }
 
 function displayHelptext() {
+
   var data = require('./helptextData.json');
   writeHelptext(data, openHelptextWindow);
 }

@@ -50,5 +50,24 @@ ipcMain.on('open-helptext-window', () => {
         height: 700,
     });
 
-    helptextWindow.loadURL('file://' + __dirname + '/output/displayHelptext.html');
+    helptextWindow.loadURL('file://' + __dirname + '/../temp/displayHelptext.html');
+
+    helptextWindow.on('closed', () => {
+        var dirPath = __dirname + '/../temp/splitFiles';
+        try { var files = fs.readdirSync(dirPath); }
+        catch (e) { return; }
+        if (files.length > 0)
+            for (var i = 0; i < files.length; i++) {
+                var filePath = dirPath + '/' + files[i];
+                if (fs.statSync(filePath).isFile())
+                    fs.unlinkSync(filePath);
+                else
+                    rmDir(filePath);
+            }
+        fs.rmdirSync(dirPath);
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        helptextWindow = null;
+    });
 });

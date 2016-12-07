@@ -23,3 +23,31 @@
     width: 100%;
     background-color: grey;
 }
+
+.htButton {
+    padding:10px;
+    color:black;
+    background-color:cyan;
+    border-radius:3px;
+    border: 1px solid grey;
+    position: relative;
+    width: 25%;
+    margin: 10px;
+    display: inline-block;
+}
+
+.htButton:hover {
+    cursor: pointer;
+    border: 1px solid #FCB040;
+}
+
+.header {
+    background-color: darkgrey;
+    margin: 5px
+}
+
+body {
+    margin: 0px !important;
+    margin-bottom: 10px !important;
+    padding: 0px;
+}

@@ -37,14 +37,21 @@ function writeHelptext(data, callback) {
     fs.mkdir(__dirname + '/../temp/splitFiles', () => {
       var buttons =
         `
-          <html><body>
-          <header>
-          <a href="./masterHelptext.htm" download>
-            <div>Download Master File</div>
-          </a>
-          <a href="./splitFiles.zip" download>
-            <div>Download Split Text</div>
-          </a>
+          <html>
+          <head>
+          <link rel="stylesheet" href="
+          ` + __dirname +
+        `/../app.asar/index.css"></link>
+          </head>
+          <body>
+          <header class="header">
+            <a href="./masterHelptext.htm" download>
+              <div class="htButton">Download Master File</div>
+            </a>
+            <a href="./splitFiles.zip" download>
+              <div class="htButton">Download Split Text</div>
+            </a>
+            <div class="htButton" onClick="handleClick(event)">Back</div>
           </header>
         `
         ;
@@ -113,7 +120,20 @@ function writeHelptext(data, callback) {
           fs.appendFileSync(__dirname + '/../temp/masterHelptext.htm', tag);
           fs.appendFileSync(__dirname + '/../temp/displayHelptext.html', tag);
         }
-        fs.appendFileSync(__dirname + '/../temp/displayHelptext.html', '</body></html>');
+        fs.appendFileSync(__dirname + '/../temp/displayHelptext.html',
+          `
+        </body>
+        <script>
+        var electron = require("electron");
+        var ipcRenderer = electron.ipcRenderer;
+          function handleClick(e) {  
+            ipcRenderer.send("home-page");
+          }
+          </script>
+        </html>
+        
+        `);
+
         zipFiles();
       });
     });

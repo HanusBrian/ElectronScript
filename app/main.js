@@ -47,11 +47,6 @@ app.on('activate', () => {
 });
 
 ipcMain.on('open-helptext-window', () => {
-    // var helptextWindow = new BrowerWindow({
-    //     width: 900,
-    //     height: 700,
-    // });
-
     win.loadURL('file://' + __dirname + '/../temp/displayHelptext.html');
 
     win.on('closed', () => {

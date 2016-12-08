@@ -14,11 +14,10 @@
 			<input id="download-button" type="button" value="Download Template" onClick="window.location.href='helpTextTemplate.xls'">
 		</form>
 		</div>
-		<div ondragover="handleDragover(event)" 
+		<div id="drop-box" ondragover="handleDragover(event)" 
 			ondragleave="handleDragend(event)" 
 			ondrop="handleDrop(event)"
-			ondragend="handleDragend(event)"
-			style="height: 500px; border: 5px dotted #ccc;border-radius:10px">
+			ondragend="handleDragend(event)">
 			<p style="margin: 10px; text-align: center">
 				<strong>Drop Your Helptext Excel Here</strong>
 			</p>

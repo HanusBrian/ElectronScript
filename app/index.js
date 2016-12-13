@@ -7,6 +7,7 @@ var fs = require('fs');
 var path = require('path');
 var zip = require('zip-folder');
 var XLS = require('xlsjs');
+var dev = true;
 
 function handleDrop(e) {
   e.preventDefault();
@@ -18,12 +19,86 @@ function handleDrop(e) {
     var workbook = XLS.readFile(files[0].path, { type: "binary" });
     var dataArr = XLS.utils.sheet_to_row_object_array(workbook.Sheets['Sheet1']);
     console.log(dataArr);
+    formatDataArr(dataArr);
 
     fs.mkdir(__dirname + '/../temp/', () => {
       writeHelptext(dataArr, openHelptextWindow);
     });
   }
   return false;
+}
+
+function formatDataArr(dataArr) {
+  for (var i = 0; i < dataArr.length; i++) {
+    var rac = dataArr[i]["Recommended Assessment Criteria"];
+    if (rac) {
+      if (rac.indexOf("\u2022") > -1) {
+        rac = parseOl(rac);
+      }
+      if (rac.indexOf('\n')) {
+        rac = parseNl(rac);
+      }
+    }
+    if (dataArr[i]["Picklist"]) {
+      parsePicklist(dataArr[i]["Picklist"]);
+    }
+  }
+}
+
+function parseOl(data) {
+  var temp = "";
+  var isFirstLi = true;
+  while (data.indexOf("\u2022") > -1) {
+    temp += data.substring(0, data.indexOf("\u2022"));
+
+    if (isFirstLi) {
+      temp += "<ul><li>";
+      isFirstLi = false;
+    }
+    else
+      temp += "<li>";
+
+    if (data.indexOf("\n") > -1) {
+      temp += data.substring(data.indexOf("\u2022") + 1, data.indexOf('/n') + 1);
+      temp += "</li>";
+      data = data.indexOf('/n'+ 1, data.indexOf("\u2022") + 1);
+    }
+    else {
+      temp += data.substring(data.indexOf("\u2022") + 1);
+      temp += "</li>";
+    }
+  }
+  return temp;
+}
+
+function parseNl(data) {
+  var temp = "";
+
+  while (data.indexOf("\n") > -1) {
+    temp += data.substring(0, data.indexOf("\n"));
+    temp += "<br><br>";
+    data = data.substring(data.indexOf("\n") + 1);
+  }
+  temp += data;
+  return temp;
+}
+
+function parsePicklist(data) {
+  var temp = "";
+  while (data.indexOf("\n") > -1) {
+    temp += `<li style='list-style-type: disc'>
+                  <p class="para">
+                    <span class="span2">`;
+    temp += data.substring(0, data.indexOf("\n"));
+    temp += "</span></p></li>";
+    data = data.substring(data.indexOf("\n") + 1);
+  }
+  temp += `<li style='list-style-type: disc'>
+                        <p class="para">
+                          <span class="span2">`;
+  temp += data;
+  temp += "</span></p></li>";
+  return temp;
 }
 
 function openHelptextWindow() {
@@ -39,8 +114,13 @@ function writeHelptext(data, callback) {
           <html>
           <head>
           <link rel="stylesheet" href="
-          ` + __dirname +
-        `/../app.asar/index.css"></link>
+          ` + __dirname
+      if (dev)
+        buttons += './index.css">';
+      else
+        buttons += '/../app.asar/index.css">';
+      buttons += `
+        </link>
           </head>
           <body>
           <header class="header">
@@ -60,16 +140,17 @@ function writeHelptext(data, callback) {
         var color = "";
         for (var i = 0; i < data.length; i++) {
           switch (data[i]["Criticality"]) {
-            case 'Critical': color = "red"; break;
-            case 'Major': color = "orange"; break;
-            case 'NonCritical': color = "orange"; break;
-            case 'Minor': color = "blue"; break;
+            case 'Informational': color = '#3D8F22'; break;
+            case 'Critical': color = "#E00034"; break;
+            case 'Major': color = "#EEAF00"; break;
+            case 'NonCritical': color = "#EEAF00"; break;
+            case 'Minor': color = "#007AC9"; break;
             case 'Variable': color = "purple"; break;
           }
           tag = `
             <head>
-            <meta http-equiv=Content-Type content='text/html; charset=windows-1252'>
-            <meta name=Generator content='Microsoft Word 14 (filtered)'>
+            <meta http-equiv=Content-Type content='text/html; charset="utf-8"'>
+            <meta name=Generator content='utf-8'>
             <style>
               .table {
                 border: 1px solid black;
@@ -149,21 +230,7 @@ function writeHelptext(data, callback) {
                   <td class="tabdat">
                     <p class="para"><b><span class="span1"><br> Picklist:</span></b></p>
                     <ul>`;
-          if (data[i]["Picklist"]) {
-            while (data[i]["Picklist"].indexOf("\n") > -1) {
-              tag += `<li style='list-style-type: disc'>
-                        <p class="para">
-                          <span class="span2">`;
-              tag += data[i]["Picklist"].substring(0, data[i]["Picklist"].indexOf("\n"));
-              tag += "</span></p></li>";
-              data[i]["Picklist"] = data[i]["Picklist"].substring(data[i]["Picklist"].indexOf("\n") + 1);
-            }
-            tag += `<li style='list-style-type: disc'>
-                        <p class="para">
-                          <span class="span2">`;
-            tag += data[i]["Picklist"];
-            tag += "</span></p></li>";
-          }
+          tag += data[i]["Picklist"];
           tag += `</span></p><p class="parend"></li>
             </span></p><p class="parend">
                       </li>

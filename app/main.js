@@ -11,11 +11,11 @@ function createWindow() {
     win = new BrowerWindow({
         width: 900,
         height: 700,
-        resizable: false
+        // resizable: false
     });
 
     win.loadURL('file://' + __dirname + '/index.html');
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
     
 
     // Emitted when the window is closed.

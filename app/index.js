@@ -7,7 +7,7 @@ var fs = require('fs');
 var path = require('path');
 var zip = require('zip-folder');
 var XLS = require('xlsjs');
-var dev = true;
+var dev = false;
 
 function handleDrop(e) {
   e.preventDefault();
@@ -32,15 +32,16 @@ function formatDataArr(dataArr) {
   for (var i = 0; i < dataArr.length; i++) {
     var rac = dataArr[i]["Recommended Assessment Criteria"];
     if (rac) {
-      if (rac.indexOf("\u2022") > -1) {
+      if (rac.indexOf("-") > -1) {
         rac = parseOl(rac);
       }
       if (rac.indexOf('\n')) {
         rac = parseNl(rac);
       }
+      dataArr[i]["Recommended Assessment Criteria"] = rac;
     }
     if (dataArr[i]["Picklist"]) {
-      parsePicklist(dataArr[i]["Picklist"]);
+      dataArr[i]["Picklist"] = parsePicklist(dataArr[i]["Picklist"]);
     }
   }
 }
@@ -48,8 +49,11 @@ function formatDataArr(dataArr) {
 function parseOl(data) {
   var temp = "";
   var isFirstLi = true;
-  while (data.indexOf("\u2022") > -1) {
-    temp += data.substring(0, data.indexOf("\u2022"));
+  while (data.indexOf("-") > -1) {
+    if(data.indexOf('-') != 0 && data.indexOf('-') != data.indexOf('\n') + 1)
+      return temp += '</ul>' + data;
+
+    temp += data.substring(0, data.indexOf("-"));
 
     if (isFirstLi) {
       temp += "<ul><li>";
@@ -59,12 +63,12 @@ function parseOl(data) {
       temp += "<li>";
 
     if (data.indexOf("\n") > -1) {
-      temp += data.substring(data.indexOf("\u2022") + 1, data.indexOf('/n') + 1);
+      temp += data.substring(data.indexOf('-')+1, data.indexOf('\n'));
       temp += "</li>";
-      data = data.indexOf('/n'+ 1, data.indexOf("\u2022") + 1);
+      data = data.substring(data.indexOf('\n')+ 1);
     }
     else {
-      temp += data.substring(data.indexOf("\u2022") + 1);
+      temp += data.substring(data.indexOf("-") + 1);
       temp += "</li>";
     }
   }
@@ -256,7 +260,6 @@ function writeHelptext(data, callback) {
         </html>
         
         `);
-
         zipFiles();
       });
     });

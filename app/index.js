@@ -49,11 +49,12 @@ function formatDataArr(dataArr) {
 function parseOl(data) {
   var temp = "";
   var isFirstLi = true;
-  while (data.indexOf("-") > -1) {
-    if(data.indexOf('-') != 0 && data.indexOf('-') != data.indexOf('\n') + 1)
+  while (data.indexOf('-') > -1) {
+    if (data.indexOf('-') != 0 && data.indexOf('\n', data.indexOf('-') - 1) != data.indexOf('-') - 1)
       return temp += '</ul>' + data;
 
     temp += data.substring(0, data.indexOf("-"));
+    data = data.substring(data.indexOf("-"))
 
     if (isFirstLi) {
       temp += "<ul><li>";
@@ -63,9 +64,11 @@ function parseOl(data) {
       temp += "<li>";
 
     if (data.indexOf("\n") > -1) {
-      temp += data.substring(data.indexOf('-')+1, data.indexOf('\n'));
+      if (data.indexOf('\n') == 0)
+        data = data.substring(1);
+      temp += data.substring(data.indexOf('-') + 1, data.indexOf('\n'));
       temp += "</li>";
-      data = data.substring(data.indexOf('\n')+ 1);
+      data = data.substring(data.indexOf('\n'));
     }
     else {
       temp += data.substring(data.indexOf("-") + 1);
@@ -156,6 +159,9 @@ function writeHelptext(data, callback) {
             <meta http-equiv=Content-Type content='text/html; charset="utf-8"'>
             <meta name=Generator content='utf-8'>
             <style>
+              html * {
+                font-family:'Arial','sans-serif';
+              }
               .table {
                 border: 1px solid black;
                 margin: 0px;
@@ -183,13 +189,14 @@ function writeHelptext(data, callback) {
                 padding: 0in 5.4pt 0in 5.4pt;
                 height: 110.15pt'
               }
-              .span1 {
-                font-family:'Arial','sans-serif';
-              }
+
               .span2 {
-                font-family:'Arial','sans-serif';
                 color:black;
                 font-weight:normal;
+              }
+              li {
+                text-align:justify;
+                line-height:normal; 
               }
               .parend {
                 margin-top:4.0pt;
@@ -201,30 +208,30 @@ function writeHelptext(data, callback) {
             </style>
             </head>
             <body lang=EN-US>
-            <div class=WordSection1>
+            <div>
               <table class="table">
                 <tr style='background-color:`
             + color +
             `;border-top: 1px solid black'>
                 <td class="tabdat">
                   <p class="para">
-                  <b><span class="span1">`
+                  <b>`
             + data[i]["Question Number"] +
             `<span style='color:green'>&nbsp; </span><span style='color:white'>`
             + data[i]["Question Text"] +
-            `</span></span></b></p>
+            `</span></b></p>
                   </td>
                 </tr>
                 <tr>
                   <td class="tabdat">
-                    <p class="para"><b><span class="span1"><br>  Threshold: </span></b><span class="span2">`
+                    <p class="para"><b><br>  Threshold: </b><span class="span2">`
             + data[i]["Threshold"] +
             `<br><br></span></p>
                   </td>
                 </tr>
                 <tr>
                   <td class="tabdat">
-                    <p class="para"><b><span class="span1"><br>  Assessment:</span></b></p>
+                    <p class="para"><b><br>  Assessment:</b></p>
                     <p class="para"><span class="span2">`
             + data[i]["Recommended Assessment Criteria"] +
             `</span></p>
@@ -232,7 +239,7 @@ function writeHelptext(data, callback) {
                 </tr>
                 <tr style='height:110.15pt'>
                   <td class="tabdat">
-                    <p class="para"><b><span class="span1"><br> Picklist:</span></b></p>
+                    <p class="para"><b><br> Picklist:</b></p>
                     <ul>`;
           tag += data[i]["Picklist"];
           tag += `</span></p><p class="parend"></li>
